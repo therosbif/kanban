@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { signIn } from '@auth/sveltekit/client';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
 <svelte:head>
@@ -11,7 +14,7 @@
 	<button
 		type="button"
 		class="flex my-44 mx-auto gap-2 w-full items-center justify-center rounded-lg text-gray-600 py-2 px-4 text-center text-base font-semibold bg-gray-50 border border-gray-300 shadow-sm transition duration-100 ease-in hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-200"
-		on:click={() => signIn('github')}
+		on:click={() => signIn('github', { callbackUrl: data.redirect })}
 	>
 		<img src="/github.svg" alt="github logo" />
 		Sign in with GitHub

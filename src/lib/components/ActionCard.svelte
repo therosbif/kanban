@@ -2,8 +2,9 @@
 	import { Plus } from '@steeze-ui/heroicons';
 	import Card from './Card.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { enhance } from '$app/forms';
+	import { applyAction, enhance } from '$app/forms';
 	import type { flattenZodErrors } from '$lib/flattenZodErrors';
+	import { invalidateAll } from '$app/navigation';
 
 	let creating = false;
 
@@ -36,6 +37,15 @@
 						...data,
 						...extraData
 					};
+					return async ({ result }) => {
+						console.log('result', result);
+						if (result.type === 'success') {
+							creating = false;
+							console.log('data', data);
+							invalidateAll();
+						}
+						applyAction(result);
+					};
 				}}
 				class="flex flex-col gap-1"
 			>
@@ -45,11 +55,11 @@
 					name="name"
 					{placeholder}
 					autofocus
-					class="border-none text-lg placeholder:text-gray-300 bg-transparent rounded-md py-0 focus:border-indigo-700"
+					class="border-none text-lg w-full placeholder:text-gray-300 bg-transparent rounded-md py-0 focus:border-indigo-700"
 				/>
 				<slot />
 
-				<button type="submit">submit</button>
+				<button type="submit" class="hidden" />
 
 				{#each errors as error}
 					<span

@@ -47,7 +47,7 @@ export const actions = {
 		const data = createColumnSchema.safeParse(rawData);
 		if (!data.success) {
 			const errors = flattenZodErrors(data.error.errors);
-			return fail(400, { error: true, action: 'column', errors });
+			return fail(400, { error: true, action: 'column', columnId: undefined, errors } as const);
 		}
 
 		const { id } = params;
@@ -60,19 +60,25 @@ export const actions = {
 			}
 		});
 
-		return { error: false } as const;
+		return { error: false, action: 'column' } as const;
 	},
-	createTask: async ({ request, locals, params }) => {
+	createTask: async ({ request, locals }) => {
 		const session = await locals.getSession();
 		if (!session?.user?.email) throw redirect(307, '/auth');
 
-		const rawData = Object.fromEntries(await request.formData());
-		console.log('rawData', rawData);
+		const formData = await request.formData();
+		const rawData = Object.fromEntries(formData);
 		const data = createTaskSchema.safeParse(rawData);
 
 		if (!data.success) {
+			const columnId = formData.get('columnId')?.toString();
 			const errors = flattenZodErrors(data.error.errors);
-			return fail(400, { error: true, action: 'task', errors });
+			return fail(400, {
+				error: true,
+				action: 'task',
+				columnId,
+				errors
+			} as const);
 		}
 
 		await prisma.task.create({
@@ -84,6 +90,7 @@ export const actions = {
 			}
 		});
 
-		throw redirect(307, `/${params.id}`);
+		return { error: false, action: 'task' } as const;
+		// throw redirect(307, `/${params.id}`);
 	}
 } satisfies Actions;
