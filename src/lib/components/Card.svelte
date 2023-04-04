@@ -5,7 +5,7 @@
 </script>
 
 <li
-	class="shadow-md rounded-lg p-4 border border-indigo-200 {active
+	class="list-none shadow-md rounded-lg p-4 border border-indigo-200 {active
 		? 'bg-indigo-600 text-white'
 		: ''}"
 	on:click

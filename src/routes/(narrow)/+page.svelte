@@ -23,7 +23,7 @@
 
 <ul class="flex flex-col gap-4 py-4">
 	{#each data.boards as board}
-		<Card href="boards/{board.id}">
+		<Card href="/{board.id}">
 			<div slot="title" class="flex items-center gap-2">
 				<Icon src={Squares2x2} size="20" />
 				<h3>{board.name}</h3>
@@ -55,7 +55,7 @@
 					{/if}
 				</form>
 			{:else}
-				<h3>Create Board</h3>
+				<h3>New Board</h3>
 			{/if}
 		</div>
 	</Card>

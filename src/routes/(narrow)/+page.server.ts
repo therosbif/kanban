@@ -2,6 +2,7 @@ import { redirect, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import prisma from '$lib/prisma';
 import { z } from 'zod';
+import { flattenZodErrors } from '$lib/flattenZodErrors';
 
 export const load = (async (event) => {
 	const session = await event.locals.getSession();
@@ -38,13 +39,7 @@ export const actions = {
 		console.log('rawData', rawData);
 		const data = createBoardScema.safeParse(rawData);
 		if (!data.success) {
-			const errors = data.error.errors.map((error) => {
-				console.log('error', error);
-				return {
-					message: error.message,
-					field: error.path[0]
-				};
-			});
+			const errors = flattenZodErrors(data.error.errors);
 			return fail(400, { error: true, errors });
 		}
 
@@ -59,6 +54,6 @@ export const actions = {
 			}
 		});
 
-		throw redirect(303, `/boards/${board.id}`);
+		throw redirect(303, `/${board.id}`);
 	}
 } satisfies Actions;
