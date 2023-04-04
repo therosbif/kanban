@@ -7,6 +7,4 @@
 </script>
 
 <Header session={data.session} />
-<main>
-	<slot />
-</main>
+<slot />
