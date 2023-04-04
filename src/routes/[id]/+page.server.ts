@@ -33,6 +33,11 @@ const createColumnSchema = z.object({
 	name: z.string().min(3).max(30)
 });
 
+const createTaskSchema = z.object({
+	name: z.string().min(3).max(30),
+	columnId: z.string().cuid()
+});
+
 export const actions = {
 	createColumn: async ({ params, request, locals }) => {
 		const session = await locals.getSession();
@@ -42,7 +47,7 @@ export const actions = {
 		const data = createColumnSchema.safeParse(rawData);
 		if (!data.success) {
 			const errors = flattenZodErrors(data.error.errors);
-			return fail(400, { error: true, errors });
+			return fail(400, { error: true, action: 'column', errors });
 		}
 
 		const { id } = params;
@@ -56,5 +61,29 @@ export const actions = {
 		});
 
 		return { error: false } as const;
+	},
+	createTask: async ({ request, locals, params }) => {
+		const session = await locals.getSession();
+		if (!session?.user?.email) throw redirect(307, '/auth');
+
+		const rawData = Object.fromEntries(await request.formData());
+		console.log('rawData', rawData);
+		const data = createTaskSchema.safeParse(rawData);
+
+		if (!data.success) {
+			const errors = flattenZodErrors(data.error.errors);
+			return fail(400, { error: true, action: 'task', errors });
+		}
+
+		await prisma.task.create({
+			data: {
+				name: data.data.name,
+				column: {
+					connect: { id: data.data.columnId }
+				}
+			}
+		});
+
+		throw redirect(307, `/${params.id}`);
 	}
 } satisfies Actions;
