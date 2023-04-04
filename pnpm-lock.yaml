@@ -22,6 +22,9 @@ dependencies:
   '@sveltejs/adapter-vercel':
     specifier: ^2.4.1
     version: 2.4.1(@sveltejs/kit@1.15.0)
+  prisma:
+    specifier: ^4.12.0
+    version: 4.12.0
   zod:
     specifier: ^3.21.4
     version: 3.21.4
@@ -72,9 +75,6 @@ devDependencies:
   prettier-plugin-svelte:
     specifier: ^2.10.0
     version: 2.10.0(prettier@2.8.7)(svelte@3.58.0)
-  prisma:
-    specifier: ^4.12.0
-    version: 4.12.0
   svelte:
     specifier: ^3.58.0
     version: 3.58.0
@@ -779,6 +779,7 @@ packages:
   /@prisma/engines@4.12.0:
     resolution: {integrity: sha512-0alKtnxhNB5hYU+ymESBlGI4b9XrGGSdv7Ud+8TE/fBNOEhIud0XQsAR+TrvUZgS4na5czubiMsODw0TUrgkIA==}
     requiresBuild: true
+    dev: false
 
   /@rollup/pluginutils@4.2.1:
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
@@ -2423,6 +2424,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.12.0
+    dev: false
 
   /punycode@2.3.0:
     resolution: {integrity: sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==}
