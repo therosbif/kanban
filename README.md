@@ -60,6 +60,7 @@ npm run dev
 cp docker/* ./
 cp docker/.* ./
 docker-compose up
+pnpm prisma db push
 ```
 
 > Dockerfile has to be put in `docker` directory to avoid interference with Railway deployment.
