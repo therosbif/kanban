@@ -37,17 +37,17 @@ export const load = (async ({ params, parent }) => {
 }) satisfies PageServerLoad;
 
 const createColumnSchema = z.object({
-	name: z.string().min(3).max(30)
+	name: z.string().min(1).max(30)
 });
 
 const createTaskSchema = z.object({
-	name: z.string().min(3).max(30)
+	name: z.string().min(1).max(30)
 });
 
 const editTaskSchema = z
 	.object({
-		name: z.string().min(3).max(30),
-		description: z.string().min(3).max(1000)
+		name: z.string().min(1).max(30),
+		description: z.string().min(1).max(1000)
 	})
 	.partial();
 
