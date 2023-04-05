@@ -88,6 +88,7 @@ The following dependencies were used in this project:
 - `@sveltejs/adapter-vercel`: Svelte adapter for Vercel platform.
 - `nodemailer`: Node.js module for sending emails.
 - `zod`: TypeScript-first schema validation library.
+- `svelte-dnd-action`: Drag & drop library for Svelte.
 
 ## Known Issues
 
