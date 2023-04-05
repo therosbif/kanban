@@ -2,7 +2,7 @@
 	import type { ActionData, PageData } from './$types';
 	import ActionCard from '$lib/components/ActionCard.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { Trash } from '@steeze-ui/heroicons';
+	import { ArrowLeft, Trash } from '@steeze-ui/heroicons';
 	import { flip } from 'svelte/animate';
 	import { deleteResource } from '$lib/api/deleteResource';
 	import Task from './Task.svelte';
@@ -66,7 +66,8 @@
 </script>
 
 <main class="from-indigo-700 bg-gradient-to-b to-whrit m-0 flex flex-col h-full">
-	<h1 class="group flex gap-4 text-4xl font-extrabold text-gray-200 py-2 mx-4 text-sl">
+	<h1 class="group items-center flex gap-4 text-4xl font-extrabold text-gray-200 py-2 mx-4 text-sl">
+		<a href="/"><Icon src={ArrowLeft} size="30" /></a>
 		{data.board.name}
 		<button
 			on:click={() => deleteResource('boards', data.board.id)}
