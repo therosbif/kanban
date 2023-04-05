@@ -11,7 +11,7 @@ export const load = (async (event) => {
 	const boards = await prisma.board.findMany({
 		where: {
 			user: {
-				email: session.user.email
+				email: session.user.email ?? undefined
 			}
 		},
 		select: {
@@ -36,7 +36,6 @@ export const actions = {
 		if (!session?.user?.email) throw redirect(303, '/auth');
 
 		const rawData = Object.fromEntries(await event.request.formData());
-		console.log('rawData', rawData);
 		const data = createBoardScema.safeParse(rawData);
 		if (!data.success) {
 			const errors = flattenZodErrors(data.error.errors);
