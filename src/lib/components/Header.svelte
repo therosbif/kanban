@@ -23,7 +23,7 @@
 				class="ml-9 align-middle"
 			>
 				<img
-					alt="profile"
+					alt="log out"
 					src={session.user?.image}
 					class="mx-auto h-12 w-12 rounded-lg object-cover"
 				/>

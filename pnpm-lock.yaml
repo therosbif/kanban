@@ -3,10 +3,10 @@ lockfileVersion: '6.0'
 dependencies:
   '@auth/core':
     specifier: ^0.5.1
-    version: 0.5.1
+    version: 0.5.1(nodemailer@6.9.1)
   '@auth/sveltekit':
     specifier: ^0.3.0
-    version: 0.3.0(@sveltejs/kit@1.15.0)(svelte@3.58.0)
+    version: 0.3.0(@sveltejs/kit@1.15.0)(nodemailer@6.9.1)(svelte@3.58.0)
   '@next-auth/prisma-adapter':
     specifier: ^1.0.5
     version: 1.0.5(@prisma/client@4.12.0)(next-auth@4.21.1)
@@ -25,6 +25,12 @@ dependencies:
   '@sveltejs/adapter-vercel':
     specifier: ^2.4.1
     version: 2.4.1(@sveltejs/kit@1.15.0)
+  crypto-js:
+    specifier: ^4.1.1
+    version: 4.1.1
+  nodemailer:
+    specifier: ^6.9.1
+    version: 6.9.1
   prisma:
     specifier: ^4.12.0
     version: 4.12.0
@@ -45,6 +51,9 @@ devDependencies:
   '@tailwindcss/typography':
     specifier: ^0.5.9
     version: 0.5.9(tailwindcss@3.1.5)
+  '@types/crypto-js':
+    specifier: ^4.1.1
+    version: 4.1.1
   '@types/node':
     specifier: ^18.15.11
     version: 18.15.11
@@ -105,7 +114,7 @@ devDependencies:
 
 packages:
 
-  /@auth/core@0.5.1:
+  /@auth/core@0.5.1(nodemailer@6.9.1):
     resolution: {integrity: sha512-t9z8F7dkuVceKWBmMy1fd2t6H+vfRju/YJ1lm+6RnJ7pNEvX5qMR874wg0+cYbWvyZazLi8fFK/FA6I3D5sSkA==}
     peerDependencies:
       nodemailer: ^6.8.0
@@ -116,18 +125,19 @@ packages:
       '@panva/hkdf': 1.0.4
       cookie: 0.5.0
       jose: 4.13.1
+      nodemailer: 6.9.1
       oauth4webapi: 2.2.0
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/sveltekit@0.3.0(@sveltejs/kit@1.15.0)(svelte@3.58.0):
+  /@auth/sveltekit@0.3.0(@sveltejs/kit@1.15.0)(nodemailer@6.9.1)(svelte@3.58.0):
     resolution: {integrity: sha512-J9uwaKadzPaQMYec9CYpa9WAjV5EIMEhj4vTuJH6HTp2FJOOJQB5t19WqWv9rYzBVm2rBTPPplQXPI5UKOvg4Q==}
     peerDependencies:
       '@sveltejs/kit': ^1.0.0
       svelte: ^3.54.0
     dependencies:
-      '@auth/core': 0.5.1
+      '@auth/core': 0.5.1(nodemailer@6.9.1)
       '@sveltejs/kit': 1.15.0(svelte@3.58.0)(vite@4.2.1)
       svelte: 3.58.0
     transitivePeerDependencies:
@@ -612,7 +622,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 4.12.0(prisma@4.12.0)
-      next-auth: 4.21.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.21.1(next@13.2.4)(nodemailer@6.9.1)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.2.4:
@@ -975,6 +985,10 @@ packages:
 
   /@types/cookie@0.5.1:
     resolution: {integrity: sha512-COUnqfB2+ckwXXSFInsFdOAWQzCCx+a5hq2ruyj+Vjund94RJQd4LG2u9hnvJrTgunKAaax7ancBYlDrNYxA0g==}
+
+  /@types/crypto-js@4.1.1:
+    resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
+    dev: true
 
   /@types/estree@1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
@@ -1417,6 +1431,10 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /crypto-js@4.1.1:
+    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
 
   /cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
@@ -2203,7 +2221,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-auth@4.21.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.21.1(next@13.2.4)(nodemailer@6.9.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-NYkU4jAPSVxWhCblE8dDFAnKM7kOoO/QEobQ0RoEVP9Wox99A3PKHwOAsWhSg8ahJG/iKIWk2Bo1xHvsS4R39Q==}
     peerDependencies:
       next: ^12.2.5 || ^13
@@ -2219,6 +2237,7 @@ packages:
       cookie: 0.5.0
       jose: 4.13.1
       next: 13.2.4(react-dom@18.2.0)(react@18.2.0)
+      nodemailer: 6.9.1
       oauth: 0.9.15
       openid-client: 5.4.0
       preact: 10.11.3
@@ -2295,6 +2314,11 @@ packages:
   /node-releases@2.0.10:
     resolution: {integrity: sha512-5GFldHPXVG/YZmFzJvKK2zDSzPKhEp0+ZR5SVaoSag9fsL5YgHbUHDfnG5494ISANDcK4KwPXAx2xqVEydmd7w==}
     dev: true
+
+  /nodemailer@6.9.1:
+    resolution: {integrity: sha512-qHw7dOiU5UKNnQpXktdgQ1d3OFgRAekuvbJLcdG5dnEo/GtcTHRYM7+UfJARdOFU9WUQO8OiIamgWPmiSFHYAA==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /nopt@5.0.0:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}

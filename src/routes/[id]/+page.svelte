@@ -75,7 +75,7 @@
 		{#each data.board.columns as column (column.id)}
 			<ul
 				animate:flip={{ duration: flipDurationMs }}
-				class="bg-white flex-1 rounded-md p-2 max-w-xs min-w-[22rem] gap-2 flex flex-col"
+				class="bg-white flex-1 rounded-md p-2 max-w-sm min-w-[22rem] gap-2 flex flex-col"
 			>
 				<ColumnTitle title={column.name} on:click={() => deleteResource('columns', column.id)} />
 				<div
@@ -85,7 +85,7 @@
 					}}
 					on:consider={(e) => handleDndConsiderCards(column.id, e)}
 					on:finalize={(e) => handleDndFinalizeCards(column.id, e)}
-					class="flex-1 overflow-y-auto gap-2 flex flex-col"
+					class="flex-1 overflow-y-auto gap-2 flex flex-col min-h-[22rem] max-h-[calc(100vh-22rem)]"
 				>
 					{#each column.tasks as task (task.id)}
 						<div animate:flip={{ duration: flipDurationMs }}>

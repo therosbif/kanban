@@ -5,7 +5,5 @@ export const load = (async (event) => {
 	const { session } = await event.parent();
 	if (session) throw redirect(307, '/');
 
-	return {
-		redirect: event.url.searchParams.get('redirect') || '/'
-	};
+	return {};
 }) satisfies PageServerLoad;
