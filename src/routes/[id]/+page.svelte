@@ -5,13 +5,13 @@
 	import { ArrowLeft, Trash } from '@steeze-ui/heroicons';
 	import { flip } from 'svelte/animate';
 	import { deleteResource } from '$lib/api/deleteResource';
-	import Task from './Task.svelte';
-	import ColumnTitle from './ColumnTitle.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import type { DndColumnsEvent, DndTasksEvent } from './types';
 	import { goto, invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { enhance } from '$app/forms';
+	import ColumnTitle from '$lib/components/ColumnTitle.svelte';
+	import Task from '$lib/components/Task.svelte';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -21,6 +21,7 @@
 	function handleDndConsiderColumns(e: DndColumnsEvent) {
 		data.board.columns = e.detail.items;
 	}
+
 	async function handleDndFinalizeColumns(e: DndColumnsEvent) {
 		data.board.columns = e.detail.items;
 
@@ -33,17 +34,22 @@
 		});
 		invalidate(`/${data.board.id}`);
 	}
+
+	let prevColumnId = '';
+
 	function handleDndConsiderCards(cid: string, e: DndTasksEvent) {
 		const colIdx = data.board.columns.findIndex((c) => c.id === cid);
 		data.board.columns[colIdx].tasks = e.detail.items;
 		data.board.columns = [...data.board.columns];
+		prevColumnId = cid;
 	}
+
 	async function handleDndFinalizeCards(cid: string, e: DndTasksEvent) {
 		const colIdx = data.board.columns.findIndex((c) => c.id === cid);
 		data.board.columns[colIdx].tasks = e.detail.items;
 		data.board.columns = [...data.board.columns];
 
-		await fetch(`/columns/${data.board.columns[colIdx].id}`, {
+		await fetch(`/columns/${cid}`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json'
@@ -52,6 +58,9 @@
 		});
 		invalidate(`/${data.board.id}`);
 	}
+
+	$: createTaskErrors = form?.action === 'createTask' ? form?.errors ?? [] : [];
+	$: columnErrors = form?.action === 'column' ? form?.errors ?? [] : [];
 
 	$: editId = $page.url.searchParams.get('edit');
 	$: editTask = data.board.columns.flatMap((c) => c.tasks).find((t) => t.id === editId);
@@ -77,58 +86,80 @@
 		</button>
 	</h1>
 	<section
-		use:dndzone={{
-			items: data.board.columns,
-			flipDurationMs,
-			type: 'columns'
-		}}
-		on:consider={handleDndConsiderColumns}
-		on:finalize={handleDndFinalizeColumns}
 		class="bg-indigo-100/80 m-4 p-2 rounded-md flex-1 flex overflow-x-auto gap-2 items-stretch"
 	>
-		{#each data.board.columns as column (column.id)}
-			<ul
-				animate:flip={{ duration: flipDurationMs }}
-				class="bg-white flex-1 rounded-md p-2 max-w-sm min-w-[22rem] gap-2 flex flex-col"
-			>
-				<ColumnTitle title={column.name} on:click={() => deleteResource('columns', column.id)} />
-				<div
-					use:dndzone={{
-						items: column.tasks,
-						flipDurationMs
-					}}
-					on:consider={(e) => handleDndConsiderCards(column.id, e)}
-					on:finalize={(e) => handleDndFinalizeCards(column.id, e)}
-					class="flex-1 overflow-y-auto gap-2 flex flex-col min-h-[22rem] max-h-[calc(100vh-22rem)]"
+		<div
+			use:dndzone={{
+				items: data.board.columns,
+				flipDurationMs,
+				type: 'columns'
+			}}
+			on:consider={handleDndConsiderColumns}
+			on:finalize={handleDndFinalizeColumns}
+			class="flex gap-2"
+		>
+			{#each data.board.columns as column (column.id)}
+				<ul
+					animate:flip={{ duration: flipDurationMs }}
+					class="bg-white flex-1 rounded-md p-2 max-w-sm min-w-[22rem] gap-2 flex flex-col"
 				>
-					{#each column.tasks as task (task.id)}
-						<a href="?edit={task.id}" animate:flip={{ duration: flipDurationMs }}>
-							<Task {task} on:click={() => deleteResource('tasks', task.id)} />
-						</a>
-					{/each}
-				</div>
-				<ActionCard
-					label="New Task"
-					placeholder="Task Name..."
-					action="?/createTask&columnId={column.id}"
-					errors={form?.action === 'createTask' && form?.columnId === column.id ? form.errors : []}
-				>
-					<input
-						type="text"
-						name="columnId"
-						value={column.id}
-						data-sveltekit-preload-data
-						class="hidden"
+					<ColumnTitle
+						title={column.name}
+						on:click={() => {
+							deleteResource('columns', column.id);
+							data.board.columns = data.board.columns.filter((c) => c.id !== column.id);
+						}}
 					/>
-				</ActionCard>
-			</ul>
-		{/each}
-		<ul class="bg-white rounded-md p-2 flex-1 max-w-xs min-w-[22rem]">
+					<div
+						use:dndzone={{
+							items: column.tasks,
+							flipDurationMs
+						}}
+						on:consider={(e) => handleDndConsiderCards(column.id, e)}
+						on:finalize={(e) => handleDndFinalizeCards(column.id, e)}
+						class="flex-1 overflow-y-auto gap-2 flex flex-col min-h-[22rem] max-h-[calc(100vh-22rem)]"
+					>
+						{#each column.tasks as task (task.id)}
+							<a href="?edit={task.id}" animate:flip={{ duration: flipDurationMs }}>
+								<Task
+									{task}
+									on:click={() => {
+										deleteResource('tasks', task.id);
+										data.board.columns = data.board.columns.map((c) => ({
+											...c,
+											tasks: c.tasks.filter((t) => t.id !== task.id)
+										}));
+									}}
+								/>
+							</a>
+						{/each}
+					</div>
+					<ActionCard
+						label="New Task"
+						placeholder="Task Name..."
+						action="?/createTask&columnId={column.id}"
+						errors={form?.columnId === column.id ? createTaskErrors : []}
+					>
+						<input
+							type="text"
+							name="columnId"
+							value={column.id}
+							data-sveltekit-preload-data
+							class="hidden"
+						/>
+					</ActionCard>
+				</ul>
+			{/each}
+		</div>
+		<ul
+			class="bg-white rounded-md p-2 flex-1 max-w-xs min-w-[22rem] cursor-default"
+			draggable="false"
+		>
 			<ActionCard
 				label="New Column"
 				placeholder="Column Name..."
 				action="?/createColumn"
-				errors={form?.action === 'column' ? form.errors : []}
+				errors={columnErrors}
 			/>
 		</ul>
 	</section>
@@ -141,7 +172,7 @@
 		on:keydown={(e) => e.key === 'Escape' && close()}
 	>
 		<div
-			class="prose min-w-[60rem] rounded-md p-4 bg-indigo-50 flex flex-col"
+			class="prose min-w-[14rem] w-[calc(100vw-5%)] rounded-md p-4 bg-indigo-50 flex flex-col"
 			on:click|stopPropagation
 			on:keydown|stopPropagation
 		>
@@ -161,7 +192,7 @@
 				<label class="mt-4" for="description"> Description </label>
 				<textarea class="rounded-md h-40" name="description" bind:value={editTask.description} />
 				<button
-					class="bg-indigo-700 text-white mt-4 rounded-md w-fit px-64 py-1 m-auto"
+					class="bg-indigo-700 text-white mt-4 rounded-md w-fit px-14 py-1 ml-auto"
 					type="submit">Save</button
 				>
 			</form>

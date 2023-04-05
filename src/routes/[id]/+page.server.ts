@@ -86,7 +86,7 @@ export const actions = {
 				action: 'createTask',
 				columnId: undefined,
 				errors: [{ field: 'columnId', message: 'No Id specified' }]
-			} as const);
+			});
 
 		const formData = await request.formData();
 		const rawData = Object.fromEntries(formData);
@@ -99,7 +99,7 @@ export const actions = {
 				action: 'createTask',
 				columnId,
 				errors
-			} as const);
+			});
 		}
 
 		await prisma.task.create({
@@ -111,7 +111,7 @@ export const actions = {
 			}
 		});
 
-		return { error: false, action: 'createTask' } as const;
+		return { error: false, action: 'createTask' };
 		// throw redirect(307, `/${params.id}`);
 	},
 	editTask: async ({ request, locals, url }) => {

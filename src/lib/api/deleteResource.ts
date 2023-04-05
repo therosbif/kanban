@@ -1,4 +1,4 @@
-import { invalidate, invalidateAll } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
 
 export async function deleteResource(resource: 'tasks' | 'columns' | 'boards', id: string) {
 	await fetch(`/${resource}/${id}`, {
@@ -6,7 +6,7 @@ export async function deleteResource(resource: 'tasks' | 'columns' | 'boards', i
 	});
 
 	if (resource === 'boards') {
-		invalidate(`/${id}`);
+		goto('/');
 	} else {
 		invalidateAll();
 	}

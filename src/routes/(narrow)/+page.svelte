@@ -31,6 +31,6 @@
 		</li>
 	{/each}
 
-	<ActionCard errors={form?.errors} label="New Board" placeholder="Board Name..." />
+	<ActionCard errors={form?.errors ?? []} label="New Board" placeholder="Board Name..." />
 </ul>
 <slot />

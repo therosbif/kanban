@@ -2,6 +2,8 @@ import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import prisma from '$lib/prisma';
 import { z } from 'zod';
+import { setDebugMode } from 'svelte-dnd-action';
+setDebugMode(true);
 
 export const DELETE = (async ({ locals, params }) => {
 	const session = await locals.getSession();
@@ -64,20 +66,20 @@ export const PATCH = (async ({ locals, params, request }) => {
 
 	if (!oldColumn) throw redirect(307, '/');
 
-	const tasks = body.tasks?.map((id) => ({ id }));
+	let i = 0;
+	const tasks = body.tasks?.map((id) => ({ id, position: i++ }));
 
 	const column = await prisma.column.update({
-		where: {
-			id
-		},
+		where: { id },
 		data: {
-			name: body.name ?? oldColumn.name,
-			tasks:
-				tasks === undefined
-					? undefined
-					: {
-							set: tasks
-					  }
+			name: body.name,
+			tasks: {
+				set: tasks?.map(({ id }) => ({ id })),
+				updateMany: tasks?.map(({ id, position }) => ({
+					where: { id },
+					data: { position }
+				}))
+			}
 		}
 	});
 
