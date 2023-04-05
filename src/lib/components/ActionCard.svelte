@@ -2,9 +2,8 @@
 	import { Plus } from '@steeze-ui/heroicons';
 	import Card from './Card.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
-	import { applyAction, enhance } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import type { flattenZodErrors } from '$lib/flattenZodErrors';
-	import { invalidateAll } from '$app/navigation';
 
 	let creating = false;
 
@@ -12,7 +11,6 @@
 	export let errors: ReturnType<typeof flattenZodErrors> = [];
 	export let label: string;
 	export let placeholder: string = label;
-	export let extraData: Record<string, string> = {};
 
 	function handleNewColumn() {
 		creating = true;
@@ -29,26 +27,7 @@
 	<div slot="title" class="flex items-center gap-2">
 		<Icon src={Plus} size="20" />
 		{#if creating}
-			<form
-				method="POST"
-				{action}
-				use:enhance={({ data }) => {
-					data = {
-						...data,
-						...extraData
-					};
-					return async ({ result }) => {
-						console.log('result', result);
-						if (result.type === 'success') {
-							creating = false;
-							console.log('data', data);
-							invalidateAll();
-						}
-						applyAction(result);
-					};
-				}}
-				class="flex flex-col gap-1"
-			>
+			<form method="POST" {action} use:enhance class="flex flex-col gap-1">
 				<!-- svelte-ignore a11y-autofocus -->
 				<input
 					type="text"

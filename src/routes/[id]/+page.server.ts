@@ -41,8 +41,7 @@ const createColumnSchema = z.object({
 });
 
 const createTaskSchema = z.object({
-	name: z.string().min(3).max(30),
-	columnId: z.string().cuid()
+	name: z.string().min(3).max(30)
 });
 
 const editTaskSchema = z
@@ -76,20 +75,28 @@ export const actions = {
 
 		return { error: false, action: 'column' } as const;
 	},
-	createTask: async ({ request, locals }) => {
+	createTask: async ({ request, locals, url }) => {
 		const session = await locals.getSession();
 		if (!session?.user?.email) throw redirect(307, '/auth');
+
+		const columnId = url.searchParams.get('columnId');
+		if (!columnId)
+			return fail(400, {
+				error: true,
+				action: 'createTask',
+				columnId: undefined,
+				errors: [{ field: 'columnId', message: 'No Id specified' }]
+			} as const);
 
 		const formData = await request.formData();
 		const rawData = Object.fromEntries(formData);
 		const data = createTaskSchema.safeParse(rawData);
 
 		if (!data.success) {
-			const columnId = formData.get('columnId')?.toString();
 			const errors = flattenZodErrors(data.error.errors);
 			return fail(400, {
 				error: true,
-				action: 'task',
+				action: 'createTask',
 				columnId,
 				errors
 			} as const);
@@ -99,12 +106,12 @@ export const actions = {
 			data: {
 				name: data.data.name,
 				column: {
-					connect: { id: data.data.columnId }
+					connect: { id: columnId }
 				}
 			}
 		});
 
-		return { error: false, action: 'task' } as const;
+		return { error: false, action: 'createTask' } as const;
 		// throw redirect(307, `/${params.id}`);
 	},
 	editTask: async ({ request, locals, url }) => {

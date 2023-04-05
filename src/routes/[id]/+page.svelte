@@ -109,9 +109,8 @@
 				<ActionCard
 					label="New Task"
 					placeholder="Task Name..."
-					action="?/createTask"
-					errors={form?.action === 'task' && form?.columnId === column.id ? form.errors : []}
-					extraData={{ columnId: column.id }}
+					action="?/createTask&columnId={column.id}"
+					errors={form?.action === 'createTask' && form?.columnId === column.id ? form.errors : []}
 				>
 					<input
 						type="text"

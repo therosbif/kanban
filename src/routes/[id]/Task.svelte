@@ -10,7 +10,7 @@
 <Card>
 	<h3 slot="title" class="flex items-center justify-between">
 		{task.name}
-		<button on:click class="group-hover:block hidden">
+		<button on:click|preventDefault class="group-hover:block hidden">
 			<Icon src={Trash} size="16" class="stroke-rose-500" />
 		</button>
 	</h3>
