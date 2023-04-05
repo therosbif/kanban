@@ -19,6 +19,17 @@ This is a simple web application allowing the user to create Kanban boards, insp
 
 ## Installation and Usage
 
+### Docker
+
+`Dockerfile` and `docker-compose.yml` files are provided in the `docker` directory.
+
+```bash
+cp docker/* ./
+docker-compose up
+```
+
+> Dockerfile has to be put in `docker` directory to avoid interference with Railway deployment.
+
 ### Clone the repository
 
 ```bash
@@ -72,7 +83,6 @@ The following dependencies were used in this project:
 - `@steeze-ui/svelte-icon` `@steeze-ui/heroicons`: Icon library.
 - `@sveltejs/adapter-node`: Svelte adapter for Node.js server.
 - `@sveltejs/adapter-vercel`: Svelte adapter for Vercel platform.
-- `crypto-js`: JavaScript library for cryptography.
 - `nodemailer`: Node.js module for sending emails.
 - `zod`: TypeScript-first schema validation library.
 
