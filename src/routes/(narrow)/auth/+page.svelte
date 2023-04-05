@@ -5,6 +5,7 @@
 	let email = '';
 	let emailErrors: string[] = [];
 	let touched = false;
+	let loading = false;
 
 	$: {
 		if (!touched) {
@@ -21,6 +22,7 @@
 
 	function emailLogin(email: string) {
 		if (emailErrors.length === 0) {
+			loading = true;
 			signIn('email', { email });
 		}
 	}
@@ -47,7 +49,8 @@
 			name="email"
 			placeholder="Email"
 			bind:value={email}
-			class="border-none text-lg w-full placeholder:text-gray-400 bg-gray-50 rounded-md py-2 focus:border-indigo-700"
+			class="border-none text-lg w-full disabled:text-gray-600 placeholder:text-gray-400 bg-gray-50 rounded-md py-2 focus:border-indigo-700"
+			disabled={loading}
 		/>
 		{#each emailErrors as error}
 			<span
@@ -59,10 +62,14 @@
 
 		<button
 			type="submit"
-			class="flex w-full items-center justify-center rounded-lg text-gray-50 py-2 px-4 text-center text-base font-semibold bg-indigo-700 shadow-md transition duration-200 ease-in hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-200 disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-slate-700"
-			disabled={!!emailErrors.length}
+			class="flex w-full items-center justify-center rounded-lg text-gray-50 py-2 px-4 text-center text-base font-semibold bg-indigo-700 shadow-md transition duration-200 ease-in hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-200 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-slate-700"
+			disabled={!!emailErrors.length || loading}
 		>
-			Sign in with email
+			{#if loading}
+				Loading...
+			{:else}
+				Sign in with email
+			{/if}
 		</button>
 		<span class="text-center text-sm">
 			You will receive a verification email from <a

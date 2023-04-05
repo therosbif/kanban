@@ -32,6 +32,7 @@ export const handle = SvelteKitAuth({
 	],
 	adapter: {
 		...PrismaAdapter(prisma),
+		// @ts-expect-error issue
 		deleteSession: (sessionToken) => {
 			return prisma.session.deleteMany({ where: { sessionToken } });
 		}

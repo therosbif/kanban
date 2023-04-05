@@ -1,38 +1,81 @@
-# create-svelte
+# Kanban Board App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Deployed at [https://kanban-jack.up.railway.app](https://kanban-jack.up.railway.app)
 
-## Creating a project
+## Description
 
-If you're seeing this, you've probably already done this step. Congrats!
+This is a simple web application allowing the user to create Kanban boards, inspired by tools like Trello. The web app allows the user to sign in. After logging in, they can create and delete boards and for each one configure a set of columns and add cards to it. Cards have a title and a description, and it is possible to drag & drop them between columns. The state of the user’s board persists between sessions.
+
+## Technology Stack
+
+- [SvelteKit](https://kit.svelte.dev/) / [Svelte](https://svelte.dev/) - Application framework
+- [TailwindCSS](https://tailwindcss.com/) - CSS framework
+- [TypeScript](https://www.typescriptlang.org/) - Programming language
+- [Prisma](https://www.prisma.io/) - ORM
+- [PostgreSQL](https://www.postgresql.org/) - Database
+- [Auth.js](https://authjs.dev/) - Authentication library
+- [Zod](https://zod.dev) - Schema validation library
+- [Railway](https://railway.app/) - Deployment platform
+
+## Installation and Usage
+
+### Clone the repository
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+git clone https://github.com/therosbif/kanban
+cd kanban
 ```
 
-## Developing
+### Create a .env file in the project root directory and add the required environment variables
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+> a [.env.example](./.env.example) file is provided as a reference
+
+### Install dependencies
+
+```bash
+pnpm install
+```
+
+#### Run the following command to initialize a fresh database
+
+```bash
+pnpm prisma db push
+```
+
+### Start the development server
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+> Open your web browser and navigate to [http://localhost:5173](http://localhost:5173) to use the application.
 
-To create a production version of your app:
+## Available Scripts
 
-```bash
-npm run build
-```
+In the project directory, you can run:
 
-You can preview the production build with `npm run preview`.
+- `npm run dev`: Runs the app in development mode.
+- `npm run build`: Builds the app for production.
+- `npm run preview`: Serves the production build for preview.
+- `npm run check`: Checks the project for type and lint errors.
+- `npm run check:watch`: Watches the project for type and lint errors.
+- `npm run lint`: Lints the project files.
+- `npm run format`: Formats the project files.
+- `npm run prepare`: Generates Prisma Client.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Dependencies
+
+The following dependencies were used in this project:
+
+- `@auth/sveltekit`: SvelteKit adapter for authentication library.
+- `prisma` `@prisma/client`: Prisma ORM for database access.
+- `@steeze-ui/svelte-icon` `@steeze-ui/heroicons`: Icon library.
+- `@sveltejs/adapter-node`: Svelte adapter for Node.js server.
+- `@sveltejs/adapter-vercel`: Svelte adapter for Vercel platform.
+- `crypto-js`: JavaScript library for cryptography.
+- `nodemailer`: Node.js module for sending emails.
+- `zod`: TypeScript-first schema validation library.
+
+## Known Issues
+
+- Email login is not working in production due to the fact that the SMTP server is not whitelisted.
