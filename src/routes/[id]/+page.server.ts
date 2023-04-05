@@ -19,7 +19,14 @@ export const load = (async ({ params, parent }) => {
 		include: {
 			columns: {
 				include: {
-					tasks: true
+					tasks: {
+						orderBy: {
+							position: 'asc'
+						}
+					}
+				},
+				orderBy: {
+					position: 'asc'
 				}
 			}
 		}

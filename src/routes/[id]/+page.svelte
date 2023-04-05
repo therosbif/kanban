@@ -1,14 +1,55 @@
 <script lang="ts">
-	import Card from '$lib/components/Card.svelte';
 	import type { ActionData, PageData } from './$types';
 	import ActionCard from '$lib/components/ActionCard.svelte';
 	import { Icon } from '@steeze-ui/svelte-icon';
 	import { Trash } from '@steeze-ui/heroicons';
 	import { flip } from 'svelte/animate';
 	import { deleteResource } from '$lib/api/deleteResource';
+	import Task from './Task.svelte';
+	import ColumnTitle from './ColumnTitle.svelte';
+	import { dndzone } from 'svelte-dnd-action';
+	import type { DndColumnsEvent, DndTasksEvent } from './types';
+	import { invalidate } from '$app/navigation';
 
 	export let data: PageData;
 	export let form: ActionData;
+
+	const flipDurationMs = 300;
+
+	function handleDndConsiderColumns(e: DndColumnsEvent) {
+		data.board.columns = e.detail.items;
+	}
+	async function handleDndFinalizeColumns(e: DndColumnsEvent) {
+		data.board.columns = e.detail.items;
+
+		await fetch(`/boards/${data.board.id}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ columns: data.board.columns.map((c) => c.id) })
+		});
+		invalidate(`/${data.board.id}`);
+	}
+	function handleDndConsiderCards(cid: string, e: DndTasksEvent) {
+		const colIdx = data.board.columns.findIndex((c) => c.id === cid);
+		data.board.columns[colIdx].tasks = e.detail.items;
+		data.board.columns = [...data.board.columns];
+	}
+	async function handleDndFinalizeCards(cid: string, e: DndTasksEvent) {
+		const colIdx = data.board.columns.findIndex((c) => c.id === cid);
+		data.board.columns[colIdx].tasks = e.detail.items;
+		data.board.columns = [...data.board.columns];
+
+		await fetch(`/columns/${data.board.columns[colIdx].id}`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ tasks: data.board.columns[colIdx].tasks.map((c) => c.id) })
+		});
+		invalidate(`/${data.board.id}`);
+	}
 </script>
 
 <main class="from-indigo-700 bg-gradient-to-b to-whrit m-0 flex flex-col h-full">
@@ -22,37 +63,36 @@
 		</button>
 	</h1>
 	<section
+		use:dndzone={{
+			items: data.board.columns,
+			flipDurationMs,
+			type: 'columns'
+		}}
+		on:consider={handleDndConsiderColumns}
+		on:finalize={handleDndFinalizeColumns}
 		class="bg-indigo-100/80 m-4 p-2 rounded-md flex-1 flex overflow-x-auto gap-2 items-stretch"
 	>
 		{#each data.board.columns as column (column.id)}
 			<ul
-				animate:flip={{ duration: 300 }}
-				class="bg-white rounded-md p-2 flex-1 max-w-xs min-w-[22rem] gap-2 flex flex-col"
+				animate:flip={{ duration: flipDurationMs }}
+				class="bg-white flex-1 rounded-md p-2 max-w-xs min-w-[22rem] gap-2 flex flex-col"
 			>
-				<h2 class="group flex justify-between text-2xl font-bold text-indigo-700 mt-0">
-					{column.name}
-					<button
-						on:click={() => deleteResource('columns', column.id)}
-						class="group-hover:block hidden"
-					>
-						<Icon src={Trash} size="16" class="stroke-rose-500" />
-					</button>
-				</h2>
-				{#each column.tasks as task (task.id)}
-					<div animate:flip={{ duration: 300 }}>
-						<Card>
-							<h3 slot="title" class="flex items-center justify-between">
-								{task.name}
-								<button
-									on:click={() => deleteResource('tasks', task.id)}
-									class="group-hover:block hidden"
-								>
-									<Icon src={Trash} size="16" class="stroke-rose-500" />
-								</button>
-							</h3>
-						</Card>
-					</div>
-				{/each}
+				<ColumnTitle title={column.name} on:click={() => deleteResource('columns', column.id)} />
+				<div
+					use:dndzone={{
+						items: column.tasks,
+						flipDurationMs
+					}}
+					on:consider={(e) => handleDndConsiderCards(column.id, e)}
+					on:finalize={(e) => handleDndFinalizeCards(column.id, e)}
+					class="flex-1 overflow-y-auto gap-2 flex flex-col"
+				>
+					{#each column.tasks as task (task.id)}
+						<div animate:flip={{ duration: flipDurationMs }}>
+							<Task {task} on:click={() => deleteResource('tasks', task.id)} />
+						</div>
+					{/each}
+				</div>
 				<ActionCard
 					label="New Task"
 					placeholder="Task Name..."
