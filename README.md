@@ -19,17 +19,6 @@ This is a simple web application allowing the user to create Kanban boards, insp
 
 ## Installation and Usage
 
-### Docker
-
-`Dockerfile` and `docker-compose.yml` files are provided in the `docker` directory.
-
-```bash
-cp docker/* ./
-docker-compose up
-```
-
-> Dockerfile has to be put in `docker` directory to avoid interference with Railway deployment.
-
 ### Clone the repository
 
 ```bash
@@ -41,7 +30,9 @@ cd kanban
 
 > a [.env.example](./.env.example) file is provided as a reference
 
-### Install dependencies
+### Local
+
+#### Install dependencies
 
 ```bash
 pnpm install
@@ -53,13 +44,25 @@ pnpm install
 pnpm prisma db push
 ```
 
-### Start the development server
+#### Start the development server
 
 ```bash
 npm run dev
 ```
 
 > Open your web browser and navigate to [http://localhost:5173](http://localhost:5173) to use the application.
+
+### Docker
+
+`Dockerfile` and `docker-compose.yml` files are provided in the `docker` directory.
+
+```bash
+cp docker/* ./
+cp docker/.* ./
+docker-compose up
+```
+
+> Dockerfile has to be put in `docker` directory to avoid interference with Railway deployment.
 
 ## Available Scripts
 
