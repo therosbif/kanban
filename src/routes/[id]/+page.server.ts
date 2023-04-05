@@ -45,6 +45,13 @@ const createTaskSchema = z.object({
 	columnId: z.string().cuid()
 });
 
+const editTaskSchema = z
+	.object({
+		name: z.string().min(3).max(30),
+		description: z.string().min(3).max(1000)
+	})
+	.partial();
+
 export const actions = {
 	createColumn: async ({ params, request, locals }) => {
 		const session = await locals.getSession();
@@ -99,5 +106,42 @@ export const actions = {
 
 		return { error: false, action: 'task' } as const;
 		// throw redirect(307, `/${params.id}`);
+	},
+	editTask: async ({ request, locals, url }) => {
+		const session = await locals.getSession();
+		if (!session?.user?.email) throw redirect(307, '/auth');
+
+		const formData = await request.formData();
+		const rawData = Object.fromEntries(formData);
+		const data = editTaskSchema.safeParse(rawData);
+
+		if (!data.success) {
+			const columnId = formData.get('columnId')?.toString();
+			const errors = flattenZodErrors(data.error.errors);
+			return fail(400, {
+				error: true,
+				action: 'editTask',
+				columnId,
+				errors
+			} as const);
+		}
+
+		const id = url.searchParams.get('taskId');
+		if (!id)
+			return fail(400, {
+				error: true,
+				action: 'editTask',
+				errors: [{ field: 'editId', message: 'No Id specified' }]
+			} as const);
+
+		await prisma.task.update({
+			where: { id },
+			data: {
+				name: data.data.name,
+				description: data.data.description
+			}
+		});
+
+		return { error: false, action: 'editTask' } as const;
 	}
 } satisfies Actions;

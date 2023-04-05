@@ -9,7 +9,9 @@
 	import ColumnTitle from './ColumnTitle.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import type { DndColumnsEvent, DndTasksEvent } from './types';
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -50,6 +52,17 @@
 		});
 		invalidate(`/${data.board.id}`);
 	}
+
+	$: editId = $page.url.searchParams.get('edit');
+	$: editTask = data.board.columns.flatMap((c) => c.tasks).find((t) => t.id === editId);
+	$: if (editId && !editTask) {
+		close();
+	}
+
+	function close() {
+		editId = null;
+		goto(`/${data.board.id}`);
+	}
 </script>
 
 <main class="from-indigo-700 bg-gradient-to-b to-whrit m-0 flex flex-col h-full">
@@ -88,9 +101,9 @@
 					class="flex-1 overflow-y-auto gap-2 flex flex-col min-h-[22rem] max-h-[calc(100vh-22rem)]"
 				>
 					{#each column.tasks as task (task.id)}
-						<div animate:flip={{ duration: flipDurationMs }}>
+						<a href="?edit={task.id}" animate:flip={{ duration: flipDurationMs }}>
 							<Task {task} on:click={() => deleteResource('tasks', task.id)} />
-						</div>
+						</a>
 					{/each}
 				</div>
 				<ActionCard
@@ -120,3 +133,38 @@
 		</ul>
 	</section>
 </main>
+{#if !!editTask}
+	<div
+		role="dialog"
+		class="fixed z-40 top-0 bottom-0 right-0 left-0 flex justify-center items-center bg-slate-900/80 backdrop-blur-sm"
+		on:click={close}
+		on:keydown={(e) => e.key === 'Escape' && close()}
+	>
+		<div
+			class="prose min-w-[60rem] rounded-md p-4 bg-indigo-50 flex flex-col"
+			on:click|stopPropagation
+			on:keydown|stopPropagation
+		>
+			<h1>Edit <span class="text-indigo-700">{editTask?.name}</span></h1>
+			<form
+				use:enhance={() => {
+					return async () => {
+						close();
+					};
+				}}
+				method="POST"
+				action="?/editTask&taskId={editId}"
+				class="flex flex-col"
+			>
+				<label class="m-0" for="name"> Name </label>
+				<input class="rounded-md" type="text" name="name" bind:value={editTask.name} />
+				<label class="mt-4" for="description"> Description </label>
+				<textarea class="rounded-md h-40" name="description" bind:value={editTask.description} />
+				<button
+					class="bg-indigo-700 text-white mt-4 rounded-md w-fit px-64 py-1 m-auto"
+					type="submit">Save</button
+				>
+			</form>
+		</div>
+	</div>
+{/if}
